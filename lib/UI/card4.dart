@@ -1,45 +1,82 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tp2_flutter/UI/mytheme_provider.dart';
+import 'package:settings_ui/settings_ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Card4 extends StatefulWidget {
+import 'mytheme.dart';
+
+class EcranSettings extends StatefulWidget{
   @override
-  State<Card4> createState() => _Card4State();
+  State<EcranSettings> createState() => _EcranSettingsState();
 }
-
-class _Card4State extends State<Card4> {
-  bool _isDarkMode = false;
-
-  void _toggleDarkMode(bool value) {
-    setState(() {
-      _isDarkMode = value;
-      final ThemeData theme = _isDarkMode ? ThemeData.dark() : ThemeData.light();
-      Provider.of<ThemeProvider>(context, listen: false).setTheme(theme);
-    });
-  }
-
+class _EcranSettingsState extends State<EcranSettings> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Icon(
-              Icons.article,
-              size: 100,
+    return Center(
+        child: SettingsList(
+            darkTheme: SettingsThemeData(
+                settingsListBackground:
+                MyTheme.dark().scaffoldBackgroundColor,
+                settingsSectionBackground:
+                MyTheme.dark().scaffoldBackgroundColor
             ),
-            Text(
-              'Card 4',
-              style: Theme.of(context).textTheme.headline4,
+            lightTheme: SettingsThemeData(
+                settingsListBackground:
+                MyTheme.light().scaffoldBackgroundColor,
+                settingsSectionBackground:
+                MyTheme.light().scaffoldBackgroundColor
             ),
-            Switch(
-              value: _isDarkMode,
-              onChanged: _toggleDarkMode,
-            ),
-          ],
-        ),
-      ),
-    );
+            sections: [
+        SettingsSection(
+        title: const Text('Theme'),
+        tiles: [
+    SettingsTile.switchTile(
+    initialValue: context.watch<SettingViewModel>
+        ().isDark, //Provider.of<SettingViewModel>(context).isDark,
+    onToggle: (bool value)
+    {context.read<SettingViewModel>
+    ().isDark=value;},//Provider.of<SettingViewModel (context,listen:false).isDark=value,)},
+  title: const Text('Dark mode'),
+  leading: const Icon(Icons.invert_colors),)
+  ])
+  ],
+  ),
+  );
+}
+}
+class SettingRepository{
+  static const THEME_KEY = "darkMode";
+  saveSettings(bool value) async {
+    SharedPreferences sharedPreferences = await
+    SharedPreferences.getInstance();
+    sharedPreferences.setBool(THEME_KEY, value);
+  }
+  Future<bool> getSettings() async {
+    SharedPreferences sharedPreferences = await
+    SharedPreferences.getInstance();
+    return sharedPreferences.getBool(THEME_KEY) ?? false;
   }
 }
+class SettingViewModel extends ChangeNotifier {
+  late bool _isDark;
+  late SettingRepository _settingRepository;
+  bool get isDark => _isDark;
+  SettingViewModel() {
+    _isDark = false;
+    _settingRepository = SettingRepository();
+    getSettings();
+  }
+//Switching the themes
+  set isDark(bool value) {
+    _isDark = value;
+    _settingRepository.saveSettings(value);
+    notifyListeners();
+  }
+  getSettings() async {
+    _isDark = await _settingRepository.getSettings();
+    notifyListeners();
+  }
+}
+
+

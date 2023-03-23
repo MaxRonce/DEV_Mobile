@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../detail.dart';
 import '../models/task.dart';
 
 class Ecran1 extends StatelessWidget{
-  List<Task> tasks = Task.generateTask(50);
+  late List<Task> tasks = Task.generateTask(50);
   String tags='';
-
-
   @override
   Widget build(BuildContext context) {
+    tasks = context.watch<TaskViewModel>().liste;
     // return Container(
     //   color: Colors.lightGreen,
     //   child: const Center(
@@ -31,6 +31,7 @@ class Ecran1 extends StatelessWidget{
               )
               );
             },
+
       ),
     ));
     // return ListView.builder(

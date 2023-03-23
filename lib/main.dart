@@ -1,30 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:tp2_flutter/UI/card4.dart';
 import 'package:tp2_flutter/UI/home.dart';
 import 'package:tp2_flutter/UI/mytheme.dart';
 import 'package:tp2_flutter/UI/mytheme_provider.dart';
-
 import 'package:provider/provider.dart';
+
+import 'models/task.dart';
+
 
 void main() {
   runApp(
     ChangeNotifierProvider<ThemeProvider>(
       create: (_) => ThemeProvider(),
-      child: const MyTD2(),
+      child: MyTD2(),
     ),
   );
 }
 
 class MyTD2 extends StatelessWidget {
-  const MyTD2({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<ThemeProvider>(context).themeData;
-    return MaterialApp(
-      theme: theme,
-      title: 'TD2',
-      home: Home(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+            create: (_) {
+              SettingViewModel settingViewModel = SettingViewModel();
+              //getSettings est deja appelee dans le constructeur
+              return settingViewModel;
+            }),
+        ChangeNotifierProvider(
+            create: (_) {
+              TaskViewModel taskViewModel = TaskViewModel();
+              taskViewModel.generateTasks();
+              return taskViewModel;
+            })
+      ],
+      child: Consumer<SettingViewModel>(
+        builder: (context, SettingViewModel notifier, child) {
+          return MaterialApp(
+              theme: notifier.isDark ? MyTheme.dark() : MyTheme.light(),
+              title: 'TD2',
+              home: Home()
+          );
+        },
+      ),
     );
   }
 }
-

@@ -26,7 +26,7 @@ class _HomeState extends State<Home> {
     Ecran1(),
     Ecran2(),
     Ecran3(),
-    Card4(),
+    EcranSettings(),
   ];
 
   void _onItemTapped(int index) {
@@ -87,11 +87,13 @@ class _HomeState extends State<Home> {
             label: 'Card3',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.article),
-            label: 'Card4',
+            icon: Icon(Icons.settings),
+            label: 'Settings',
           ),
         ], ),
     );
   }
 
 }
+
+

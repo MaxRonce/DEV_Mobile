@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 class Task {
   int id;
   String title;
@@ -5,6 +7,8 @@ class Task {
   int nbhours;
   int difficulty;
   String description;
+  static int nb=50;
+
 
   Task({required this.id,required this.title,required this.tags,required this.nbhours,required this.difficulty,required this.description});
 
@@ -25,6 +29,11 @@ class Task {
         difficulty: json['difficulty'],
         description: json['description']);
 
+  }
+  factory Task.newTask(){
+    nb++; //attribut static de la classe.
+    return Task(id: nb, title: 'title $nb', tags: ['tags $nb'], nbhours:
+    nb, difficulty: nb%5, description: 'description $nb');
   }
 
   Map<String, dynamic> toJson() {
@@ -48,4 +57,19 @@ class Task {
     }
     return tasks;
   }
+}
+class TaskViewModel extends ChangeNotifier{
+  late List<Task> liste;
+  TaskViewModel(){
+    liste=[];
+  }
+  void addTask(Task task){
+    liste.add(task);
+    notifyListeners();
+  }
+  void generateTasks(){
+    liste = Task.generateTask(50);
+    notifyListeners();
+  }
+
 }
