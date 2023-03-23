@@ -7,7 +7,7 @@ class Task {
   int nbhours;
   int difficulty;
   String description;
-  static int nb=50;
+  static int nb=0;
 
 
   Task({required this.id,required this.title,required this.tags,required this.nbhours,required this.difficulty,required this.description});
